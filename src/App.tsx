@@ -36,15 +36,28 @@ function App() {
     const fifteenMinsAgo = new Date(now.getTime() - 15 * 60000);
     const oneHourAhead = new Date(now.getTime() + 60 * 60000);
 
-    return flights.filter(f => {
+    const filtered = flights.filter(f => {
       const flightTime = new Date(boardType === 'departure' ? f.departure.scheduled : f.arrival.scheduled);
       return flightTime >= fifteenMinsAgo && flightTime <= oneHourAhead;
-    }).sort((a, b) => {
+    });
+
+    if (filtered.length === 0 && flights.length > 0) {
+      console.warn(`No flights in -15/+60 window for ${selectedAirport.iata}. Showing next available flights.`);
+      // Show next 5 flights regardless of time window
+      return [...flights].sort((a, b) => {
+        const timeA = new Date(boardType === 'departure' ? a.departure.scheduled : a.arrival.scheduled).getTime();
+        const timeB = new Date(boardType === 'departure' ? b.departure.scheduled : b.arrival.scheduled).getTime();
+        return timeA - timeB;
+      }).filter(f => new Date(boardType === 'departure' ? f.departure.scheduled : f.arrival.scheduled) >= fifteenMinsAgo)
+      .slice(0, 5);
+    }
+
+    return filtered.sort((a, b) => {
       const timeA = new Date(boardType === 'departure' ? a.departure.scheduled : a.arrival.scheduled).getTime();
       const timeB = new Date(boardType === 'departure' ? b.departure.scheduled : b.arrival.scheduled).getTime();
       return timeA - timeB;
     });
-  }, [flights, boardType]);
+  }, [flights, boardType, selectedAirport.iata]);
 
   useEffect(() => {
     if (filteredFlights.length === 0) return;

@@ -57,7 +57,13 @@ export const fetchFlights = async (airportIata: string, type: 'departure' | 'arr
         limit: 100
       }
     });
-    return response.data.data;
+    
+    if (response.data.error) {
+      console.error("AviationStack API Error:", response.data.error);
+      return generateMockFlights(airportIata, type);
+    }
+
+    return response.data.data || [];
   } catch (error) {
     console.error("Error fetching flights:", error);
     return generateMockFlights(airportIata, type);
@@ -81,11 +87,12 @@ const generateMockFlights = (airportIata: string, type: 'departure' | 'arrival')
   const destinations = ["JFK", "LHR", "HND", "CDG", "DXB", "SIN", "SFO", "LAX", "SYD", "GRU"];
   const statuses = ["scheduled", "active", "landed", "cancelled", "delayed"];
 
-  return Array.from({ length: 20 }).map((_) => {
+  return Array.from({ length: 50 }).map((_) => {
     const airline = airlines[Math.floor(Math.random() * airlines.length)];
     const otherAirport = destinations[Math.floor(Math.random() * destinations.length)];
     const now = new Date();
-    const scheduledTime = new Date(now.getTime() + (Math.random() * 60 - 30) * 60000);
+    // Generate flights spread over -30 to +90 minutes to ensure coverage
+    const scheduledTime = new Date(now.getTime() + (Math.random() * 120 - 30) * 60000);
 
     return {
       flight_date: scheduledTime.toISOString().split('T')[0],
