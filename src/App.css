@@ -18,6 +18,8 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #555;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .airport-selector select {
