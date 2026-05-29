@@ -14,13 +14,17 @@ const ROTATION_INTERVAL = 15000;
 function App() {
   const [selectedAirport, setSelectedAirport] = useState<Airport>(MAJOR_AIRPORTS[0]);
   const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState(true);
   const [pageIndex, setPageIndex] = useState(0);
   const [boardType, setBoardType] = useState<'departure' | 'arrival'>('departure');
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
       const data = await fetchFlights(selectedAirport.iata, boardType);
       setFlights(data);
+      setLoading(false);
+      setPageIndex(0);
     };
     loadData();
     const interval = setInterval(loadData, 60000); // Refresh every minute
@@ -114,11 +118,15 @@ function App() {
           />
         ))}
 
-        {displayedFlights.length === 0 && (
+        {loading ? (
           <div className="no-flights">
-            NO FLIGHTS SCHEDULED IN THE NEXT 10 MINUTES
+            LOADING REAL-TIME DATA...
           </div>
-        )}
+        ) : displayedFlights.length === 0 ? (
+          <div className="no-flights">
+            NO FLIGHTS SCHEDULED IN THE NEXT HOUR
+          </div>
+        ) : null}
       </main>
 
       <footer className="footer">
