@@ -48,9 +48,30 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
     }
   }, [destination, status, flightNumber, actualStr]);
 
-  // Use the airline IATA code for a more reliable and stable logo lookup if possible
-  // Clearbit often works well with domain names, so we use a curated fallback logic
-  const domain = flight.airline.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  // More robust airline domain mapping
+  const getAirlineDomain = (name: string, iata: string) => {
+    const commonAirlines: Record<string, string> = {
+      'UA': 'united.com',
+      'DL': 'delta.com',
+      'AA': 'aa.com',
+      'BA': 'britishairways.com',
+      'AF': 'airfrance.com',
+      'LH': 'lufthansa.com',
+      'EK': 'emirates.com',
+      'SQ': 'singaporeair.com',
+      'CX': 'cathaypacific.com',
+      'NH': 'ana.co.jp',
+      'JL': 'jal.co.jp',
+      'KL': 'klm.com',
+      'AS': 'alaskaair.com',
+      'WN': 'southwest.com',
+      'B6': 'jetblue.com'
+    };
+    if (commonAirlines[iata]) return commonAirlines[iata];
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  };
+
+  const domain = getAirlineDomain(flight.airline.name, flight.airline.iata);
   const logoUrl = `https://logo.clearbit.com/${domain}`;
   
   return (
@@ -60,11 +81,17 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
           <img 
             src={logoUrl} 
             alt={flight.airline.name} 
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
+            style={{ maxWidth: '90%', maxHeight: '90%', display: 'block' }}
             loading="lazy"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/lucide-react/lucide/main/icons/plane.svg';
-              (e.target as HTMLImageElement).style.filter = 'invert(0.5)';
+              const target = e.target as HTMLImageElement;
+              if (target.src.includes('clearbit')) {
+                // If clearbit fails, try a direct Wikimedia/IATA fallback or just the plane icon
+                target.src = 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=64';
+              } else if (target.src.includes('google')) {
+                target.src = 'https://raw.githubusercontent.com/lucide-react/lucide/main/icons/plane.svg';
+                target.style.filter = 'invert(0.5)';
+              }
             }}
           />
         </div>
