@@ -18,8 +18,8 @@ AeroFlip is a real-time airport flight information display system (FIDS) built w
 - Axios
 
 ## Latest Update
-- **Version**: 1.1.9
-- **Timestamp**: 2026-05-28 21:19:07 PDT
+- **Version**: 1.1.10
+- **Timestamp**: 2026-05-28 21:22:43 PDT
 - **Features**: 
     - Expanded time window (-15m to +60m) and slowed rotation to 15s.
     - Added "ACTUAL" column for delay tracking.
