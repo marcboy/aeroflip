@@ -122,7 +122,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        v{pkg.version} | UPDATED: {pkg.latestUpdate} | POWERED BY AVIATIONSTACK
+        v{pkg.version} | UPDATED: {pkg.latestUpdate} | {import.meta.env.VITE_AVIATIONSTACK_API_KEY ? 'LIVE DATA ACTIVE' : 'USING MOCK DATA'} | POWERED BY AVIATIONSTACK
       </footer>
     </div>
   );
