@@ -21,6 +21,12 @@ const laTimestamp = `${laTime} PDT`;
 
 // Update package.json
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+// Increment version (patch)
+const versionParts = pkg.version.split('.');
+versionParts[2] = parseInt(versionParts[2]) + 1;
+pkg.version = versionParts.join('.');
+
 pkg.latestUpdate = laTimestamp;
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 
@@ -28,7 +34,8 @@ fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 if (fs.existsSync(handoffPath)) {
   let handoff = fs.readFileSync(handoffPath, 'utf8');
   handoff = handoff.replace(/- \*\*Timestamp\*\*: .*/, `- **Timestamp**: ${laTimestamp}`);
+  handoff = handoff.replace(/- \*\*Version\*\*: .*/, `- **Version**: ${pkg.version}`);
   fs.writeFileSync(handoffPath, handoff);
 }
 
-console.log(`Updated timestamp to: ${laTimestamp}`);
+console.log(`Updated to Version: ${pkg.version} | Timestamp: ${laTimestamp}`);
