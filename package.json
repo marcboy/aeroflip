@@ -2,7 +2,7 @@
   "name": "aeroflip",
   "private": true,
   "version": "1.0.0",
-  "latestUpdate": "2026-05-28T14:30:00-07:00",
+  "latestUpdate": "2026-05-28T14:45:00-07:00",
   "type": "module",
   "scripts": {
     "dev": "vite",
