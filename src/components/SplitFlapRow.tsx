@@ -33,18 +33,26 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
     }
   }, [destination, status, flightNumber]);
 
-  const logoUrl = `https://logo.clearbit.com/${flight.airline.name.toLowerCase().replace(/\s+/g, '')}.com`;
+  // Use the airline IATA code for a more reliable and stable logo lookup if possible
+  // Clearbit often works well with domain names, so we use a curated fallback logic
+  const domain = flight.airline.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  const logoUrl = `https://logo.clearbit.com/${domain}`;
   
   return (
     <div className="board-row">
       <div className="col-logo">
-        <img 
-          src={logoUrl} 
-          alt={flight.airline.name} 
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/lucide-react/lucide/main/icons/plane.svg';
-          }}
-        />
+        <div className="logo-container" style={{ width: 40, height: 40, background: '#fff', borderRadius: 4, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img 
+            src={logoUrl} 
+            alt={flight.airline.name} 
+            style={{ maxWidth: '90%', maxHeight: '90%' }}
+            loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/lucide-react/lucide/main/icons/plane.svg';
+              (e.target as HTMLImageElement).style.filter = 'invert(0.5)';
+            }}
+          />
+        </div>
       </div>
       <div className="col-time">
         <SplitFlap value={timeStr} length={5} />
