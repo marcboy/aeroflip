@@ -9,7 +9,7 @@ import pkg from '../package.json';
 import './App.css';
 
 const ROWS_PER_PAGE = 8;
-const ROTATION_INTERVAL = 5000;
+const ROTATION_INTERVAL = 15000;
 
 function App() {
   const [selectedAirport, setSelectedAirport] = useState<Airport>(MAJOR_AIRPORTS[0]);
@@ -29,12 +29,12 @@ function App() {
 
   const filteredFlights = useMemo(() => {
     const now = new Date();
-    const threeMinsAgo = new Date(now.getTime() - 3 * 60000);
-    const tenMinsAhead = new Date(now.getTime() + 10 * 60000);
+    const fifteenMinsAgo = new Date(now.getTime() - 15 * 60000);
+    const oneHourAhead = new Date(now.getTime() + 60 * 60000);
 
     return flights.filter(f => {
       const flightTime = new Date(boardType === 'departure' ? f.departure.scheduled : f.arrival.scheduled);
-      return flightTime >= threeMinsAgo && flightTime <= tenMinsAhead;
+      return flightTime >= fifteenMinsAgo && flightTime <= oneHourAhead;
     }).sort((a, b) => {
       const timeA = new Date(boardType === 'departure' ? a.departure.scheduled : a.arrival.scheduled).getTime();
       const timeB = new Date(boardType === 'departure' ? b.departure.scheduled : b.arrival.scheduled).getTime();
