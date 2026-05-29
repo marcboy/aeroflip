@@ -18,8 +18,8 @@ AeroFlip is a real-time airport flight information display system (FIDS) built w
 - Axios
 
 ## Latest Update
-- **Version**: 1.1.2
-- **Timestamp**: 2026-05-28 20:38:52 PDT
+- **Version**: 1.1.3
+- **Timestamp**: 2026-05-28 20:44:08 PDT
 - **Features**: Added mechanical click sound effects when flight data flips on the board.
 
 ## Next Steps

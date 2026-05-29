@@ -98,7 +98,8 @@ function App() {
       <main className="board">
         <div className="board-header">
           <div className="col-logo">AIRLINE</div>
-          <div className="col-time">TIME</div>
+          <div className="col-expected">EXPECTED</div>
+          <div className="col-actual">ACTUAL</div>
           <div className="col-destination">{boardType === 'departure' ? 'TO' : 'FROM'}</div>
           <div className="col-flight">FLIGHT</div>
           <div className="col-gate">GATE</div>

@@ -43,7 +43,7 @@ header {
 }
 
 .board-header, .board-row {
-  min-width: 800px;
+  min-width: 900px;
 }
 
 .board-header {
@@ -68,7 +68,8 @@ header {
 .col-logo { width: 60px; display: flex; justify-content: flex-start; }
 .col-logo img { max-width: 40px; max-height: 40px; border-radius: 4px; filter: grayscale(0.5); background: white; }
 
-.col-time { width: 100px; }
+.col-expected { width: 100px; }
+.col-actual { width: 100px; }
 .col-destination { width: 80px; }
 .col-flight { width: 120px; }
 .col-gate { width: 80px; }

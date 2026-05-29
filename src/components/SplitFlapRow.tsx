@@ -19,8 +19,23 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
   }, []);
 
   const destination = type === 'departure' ? flight.arrival.iata : flight.departure.iata;
-  const time = new Date(type === 'departure' ? flight.departure.scheduled : flight.arrival.scheduled);
-  const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  
+  const scheduledTime = new Date(type === 'departure' ? flight.departure.scheduled : flight.arrival.scheduled);
+  const expectedStr = scheduledTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  
+  const estimatedTime = type === 'departure' 
+    ? (flight.departure.actual || flight.departure.estimated) 
+    : (flight.arrival.actual || flight.arrival.estimated);
+  
+  let actualStr = '--:--';
+  if (estimatedTime) {
+    const estDate = new Date(estimatedTime);
+    // Only show actual if it differs from scheduled by at least 1 minute
+    if (Math.abs(estDate.getTime() - scheduledTime.getTime()) > 60000) {
+      actualStr = estDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+  }
+
   const gate = type === 'departure' ? flight.departure.gate || '--' : flight.arrival.gate || '--';
   const status = flight.flight_status.toUpperCase();
   const flightNumber = flight.flight.iata || `${flight.airline.iata}${flight.flight.number}`;
@@ -31,7 +46,7 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(e => console.warn("Audio play blocked by browser policy:", e));
     }
-  }, [destination, status, flightNumber]);
+  }, [destination, status, flightNumber, actualStr]);
 
   // Use the airline IATA code for a more reliable and stable logo lookup if possible
   // Clearbit often works well with domain names, so we use a curated fallback logic
@@ -54,8 +69,11 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
           />
         </div>
       </div>
-      <div className="col-time">
-        <SplitFlap value={timeStr} length={5} />
+      <div className="col-expected">
+        <SplitFlap value={expectedStr} length={5} />
+      </div>
+      <div className="col-actual">
+        <SplitFlap value={actualStr} length={5} />
       </div>
       <div className="col-destination">
         <SplitFlap value={destination.padEnd(3, ' ')} length={3} />
