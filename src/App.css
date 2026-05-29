@@ -71,9 +71,9 @@ header {
 .col-expected { width: 85px; }
 .col-actual { width: 85px; }
 .col-destination { width: 65px; }
-.col-flight { width: 130px; }
+.col-flight { width: 150px; }
 .col-gate { width: 65px; }
-.col-status { width: 160px; }
+.col-status { width: 220px; }
 
 /* Override react-split-flap styles for airport look */
 .react-split-flap-char {
