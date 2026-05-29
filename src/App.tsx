@@ -1,0 +1,129 @@
+import { useState, useEffect, useMemo } from 'react';
+import { MAJOR_AIRPORTS } from './constants/airports';
+import type { Airport } from './constants/airports';
+import { fetchFlights } from './services/aviation';
+import type { Flight } from './services/aviation';
+import SplitFlapRow from './components/SplitFlapRow';
+import { Plane } from 'lucide-react';
+import './App.css';
+
+const ROWS_PER_PAGE = 8;
+const ROTATION_INTERVAL = 5000;
+
+function App() {
+  const [selectedAirport, setSelectedAirport] = useState<Airport>(MAJOR_AIRPORTS[0]);
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [boardType, setBoardType] = useState<'departure' | 'arrival'>('departure');
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchFlights(selectedAirport.iata, boardType);
+      setFlights(data);
+    };
+    loadData();
+    const interval = setInterval(loadData, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, [selectedAirport, boardType]);
+
+  const filteredFlights = useMemo(() => {
+    const now = new Date();
+    const threeMinsAgo = new Date(now.getTime() - 3 * 60000);
+    const tenMinsAhead = new Date(now.getTime() + 10 * 60000);
+
+    return flights.filter(f => {
+      const flightTime = new Date(boardType === 'departure' ? f.departure.scheduled : f.arrival.scheduled);
+      return flightTime >= threeMinsAgo && flightTime <= tenMinsAhead;
+    }).sort((a, b) => {
+      const timeA = new Date(boardType === 'departure' ? a.departure.scheduled : a.arrival.scheduled).getTime();
+      const timeB = new Date(boardType === 'departure' ? b.departure.scheduled : b.arrival.scheduled).getTime();
+      return timeA - timeB;
+    });
+  }, [flights, boardType]);
+
+  useEffect(() => {
+    if (filteredFlights.length === 0) return;
+    
+    const interval = setInterval(() => {
+      setPageIndex((prev) => (prev + 1) % Math.ceil(filteredFlights.length / ROWS_PER_PAGE));
+    }, ROTATION_INTERVAL);
+    
+    return () => clearInterval(interval);
+  }, [filteredFlights]);
+
+  const displayedFlights = useMemo(() => {
+    const start = pageIndex * ROWS_PER_PAGE;
+    return filteredFlights.slice(start, start + ROWS_PER_PAGE);
+  }, [filteredFlights, pageIndex]);
+
+  return (
+    <div className="app-container">
+      <header>
+        <div className="logo-section">
+          <Plane className="plane-icon" size={32} color="#ffd700" />
+          <h1 style={{ display: 'inline', marginLeft: '1rem', color: '#ffd700' }}>AeroFlip</h1>
+        </div>
+        
+        <div className="airport-selector">
+          <select 
+            value={selectedAirport.iata} 
+            onChange={(e) => {
+              const airport = MAJOR_AIRPORTS.find(a => a.iata === e.target.value);
+              if (airport) setSelectedAirport(airport);
+            }}
+          >
+            {MAJOR_AIRPORTS.map(a => (
+              <option key={a.iata} value={a.iata}>{a.iata} - {a.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="type-toggle">
+          <button 
+            className={boardType === 'departure' ? 'active' : ''} 
+            onClick={() => setBoardType('departure')}
+          >
+            DEPARTURES
+          </button>
+          <button 
+            className={boardType === 'arrival' ? 'active' : ''} 
+            onClick={() => setBoardType('arrival')}
+          >
+            ARRIVALS
+          </button>
+        </div>
+      </header>
+
+      <main className="board">
+        <div className="board-header">
+          <div className="col-logo">AIRLINE</div>
+          <div className="col-time">TIME</div>
+          <div className="col-destination">{boardType === 'departure' ? 'TO' : 'FROM'}</div>
+          <div className="col-flight">FLIGHT</div>
+          <div className="col-gate">GATE</div>
+          <div className="col-status">STATUS</div>
+        </div>
+
+        {displayedFlights.map((flight, idx) => (
+          <SplitFlapRow 
+            key={`${flight.flight.iata}-${idx}`} 
+            flight={flight} 
+            type={boardType} 
+          />
+        ))}
+
+        {displayedFlights.length === 0 && (
+          <div className="no-flights">
+            NO FLIGHTS SCHEDULED IN THE NEXT 10 MINUTES
+          </div>
+        )}
+      </main>
+
+      <footer className="footer">
+        REAL-TIME DATA POWERED BY AVIATIONSTACK | {new Date().toLocaleTimeString()}
+      </footer>
+    </div>
+  );
+}
+
+export default App;
