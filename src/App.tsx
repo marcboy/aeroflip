@@ -5,6 +5,7 @@ import { fetchFlights } from './services/aviation';
 import type { Flight } from './services/aviation';
 import SplitFlapRow from './components/SplitFlapRow';
 import { Plane } from 'lucide-react';
+import pkg from '../package.json';
 import './App.css';
 
 const ROWS_PER_PAGE = 8;
@@ -120,7 +121,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        REAL-TIME DATA POWERED BY AVIATIONSTACK | {new Date().toLocaleTimeString()}
+        v{pkg.version} | UPDATED: {pkg.latestUpdate} | POWERED BY AVIATIONSTACK
       </footer>
     </div>
   );
