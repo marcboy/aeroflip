@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SplitFlap } from 'react-split-flap';
 import type { Flight } from '../services/aviation';
+
+const FLIP_SOUND_URL = 'https://gfxsounds.com/wp-content/uploads/2023/03/Mechanical-keyboard-keystroke-pressing-spacebar.mp3';
 
 interface SplitFlapRowProps {
   flight: Flight;
@@ -8,8 +10,14 @@ interface SplitFlapRowProps {
 }
 
 const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
-  const logoUrl = `https://logo.clearbit.com/${flight.airline.name.toLowerCase().replace(/\s+/g, '')}.com`;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
+  // Create audio object once
+  useEffect(() => {
+    audioRef.current = new Audio(FLIP_SOUND_URL);
+    audioRef.current.volume = 0.2; // Keep it subtle
+  }, []);
+
   const destination = type === 'departure' ? flight.arrival.iata : flight.departure.iata;
   const time = new Date(type === 'departure' ? flight.departure.scheduled : flight.arrival.scheduled);
   const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -17,6 +25,16 @@ const SplitFlapRow: React.FC<SplitFlapRowProps> = ({ flight, type }) => {
   const status = flight.flight_status.toUpperCase();
   const flightNumber = flight.flight.iata || `${flight.airline.iata}${flight.flight.number}`;
 
+  // Trigger sound when important values change
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.warn("Audio play blocked by browser policy:", e));
+    }
+  }, [destination, status, flightNumber]);
+
+  const logoUrl = `https://logo.clearbit.com/${flight.airline.name.toLowerCase().replace(/\s+/g, '')}.com`;
+  
   return (
     <div className="board-row">
       <div className="col-logo">

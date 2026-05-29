@@ -18,12 +18,11 @@ AeroFlip is a real-time airport flight information display system (FIDS) built w
 - Axios
 
 ## Latest Update
-- **Version**: 1.0.0
-- **Timestamp**: 2026-05-28 14:45:00 (Los Angeles Time)
-- **Deployment**: Configured GitHub Actions for automatic deployment to GitHub Pages.
+- **Version**: 1.1.0
+- **Timestamp**: 2026-05-28 15:05:00 (Los Angeles Time)
+- **Features**: Added mechanical click sound effects when flight data flips on the board.
 
 ## Next Steps
-1. Add sound effects for board flips.
-2. Implement weather information for destination airports.
-3. Enhance TV-specific navigation (D-pad support).
-4. Verify the live URL: [https://marcboy.github.io/aeroflip/](https://marcboy.github.io/aeroflip/)
+1. Implement weather information for destination airports.
+2. Enhance TV-specific navigation (D-pad support).
+3. Verify the live URL: [https://marcboy.github.io/aeroflip/](https://marcboy.github.io/aeroflip/)
