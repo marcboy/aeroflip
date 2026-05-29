@@ -20,7 +20,10 @@ AeroFlip is a real-time airport flight information display system (FIDS) built w
 ## Latest Update
 - **Version**: 1.1.4
 - **Timestamp**: 2026-05-28 20:45:39 PDT
-- **Features**: Added mechanical click sound effects when flight data flips on the board.
+- **Features**: 
+    - Expanded time window (-15m to +60m) and slowed rotation to 15s.
+    - Added "ACTUAL" column for delay tracking.
+    - Added mechanical click sound effects.
 
 ## Next Steps
 1. Implement weather information for destination airports.
