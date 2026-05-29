@@ -21,4 +21,5 @@ export const MAJOR_AIRPORTS: Airport[] = [
   { iata: "SYD", name: "Sydney Kingsford Smith Airport", city: "Sydney", country: "Australia" },
   { iata: "GRU", name: "São Paulo/Guarulhos International Airport", city: "São Paulo", country: "Brazil" },
   { iata: "YYZ", name: "Toronto Pearson International Airport", city: "Toronto", country: "Canada" },
+  { iata: "SEA", name: "Seattle-Tacoma International Airport", city: "Seattle", country: "USA" },
 ];
